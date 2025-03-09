@@ -1,24 +1,36 @@
-import logo from './logo.svg';
+import { ToastContainer, Zoom } from 'react-toastify';
 import './App.css';
+import MusicUploadForm from './components/Card/MusicUploadFrame';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+
+      <div>
+        <div className="h-screen w-full flex items-center justify-center bg-gray-900">
+          <div className="h-full w-[390px] bg-white shadow-lg rounded-lg overflow-hidden">
+            <MusicUploadForm />
+          </div>
+        </div>
+        <ToastContainer
+          position="top-center"
+          autoClose={1500}
+          hideProgressBar
+          newestOnTop
+          closeOnClick={false}
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover={false}
+          theme="dark"
+          transition={Zoom}
+        />
+
+
+      </div>
+
     </div>
+
   );
 }
 

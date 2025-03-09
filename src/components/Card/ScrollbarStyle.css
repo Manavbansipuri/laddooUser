@@ -1,0 +1,27 @@
+/* Custom Minimal Yellow Scrollbar Indicator */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px; /* Slightly wider scrollbar */
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent; /* Completely hidden track */
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #FDB813; /* Bright yellow indicator */
+    border-radius: 12px; /* Rounded for a smooth look */
+    border: 2px solid transparent; /* Invisible border for smoothness */
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #E6A500; /* Slightly darker yellow on hover */
+  }
+  
+  /* Firefox scrollbar */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #1685cf transparent;
+  }
+  
+  /* sliding animation  */
+  
