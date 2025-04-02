@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { FaPlay, FaPause } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 const MusicPlayer = ({ title, song }) => {
   const audioRef = useRef(new Audio(song)); // Create an audio element
@@ -27,6 +28,7 @@ const MusicPlayer = ({ title, song }) => {
   // Play or Pause the song
   const togglePlayPause = () => {
     if (isPlaying) {
+
       audioRef.current.pause();
     } else {
       audioRef.current.play();

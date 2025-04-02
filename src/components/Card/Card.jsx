@@ -31,7 +31,7 @@ const Card = ({ title, image, lyrics, song }) => {
         {/* Add custom-scrollbar class and overflow-y-auto for scrolling */}
         <div className="whitespace-normal text-center p-4 w-full h-[280px] overflow-y-auto custom-scrollbar">
           {/* Lyrics Section */}
-          <div className="mt-4 mx-3" style={{ fontFamily: "'Courier Prime', monospace" }}>
+          <div className="mt-4 mx-3 text-na text-black" style={{ fontFamily: "'Courier Prime', monospace" }}>
             <h3 className="font-bold text-lg text-left">Lyrics:</h3>
             {/* Ensure text wraps and no horizontal scrollbar appears */}
             <p className="text-sm text-left break-words overflow-x-hidden">
