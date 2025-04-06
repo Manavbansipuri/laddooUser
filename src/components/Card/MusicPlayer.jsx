@@ -44,38 +44,43 @@ const MusicPlayer = ({ title, song }) => {
   };
 
   const seekTo = (clientX) => {
-    const progress = progressBarRef.current;
-    const rect = progress.getBoundingClientRect();
+    const rect = progressBarRef.current.getBoundingClientRect();
     const newTime = ((clientX - rect.left) / rect.width) * duration;
     audioRef.current.currentTime = newTime;
     setCurrentTime(newTime);
   };
 
-  const handleMouseDown = () => {
+  const handleDragStart = (clientX) => {
     setIsSeeking(true);
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
+    seekTo(clientX);
+    document.addEventListener('mousemove', handleDragging);
+    document.addEventListener('mouseup', handleDragEnd);
+    document.addEventListener('touchmove', handleTouchDragging);
+    document.addEventListener('touchend', handleTouchEnd);
   };
 
-  const handleMouseMove = (e) => {
-    seekTo(e.clientX);
-  };
-
-  const handleMouseUp = (e) => {
+  const handleDragging = (e) => seekTo(e.clientX);
+  const handleDragEnd = (e) => {
     seekTo(e.clientX);
     setIsSeeking(false);
-    document.removeEventListener('mousemove', handleMouseMove);
-    document.removeEventListener('mouseup', handleMouseUp);
+    document.removeEventListener('mousemove', handleDragging);
+    document.removeEventListener('mouseup', handleDragEnd);
   };
 
-  const handleSeekClick = (e) => {
-    seekTo(e.clientX);
+  const handleTouchDragging = (e) => seekTo(e.touches[0].clientX);
+  const handleTouchEnd = (e) => {
+    seekTo(e.changedTouches[0].clientX);
+    setIsSeeking(false);
+    document.removeEventListener('touchmove', handleTouchDragging);
+    document.removeEventListener('touchend', handleTouchEnd);
   };
+
+  const handleSeekClick = (e) => seekTo(e.clientX);
 
   return (
-    <div className="w-full h-16 bg-black px-4 py-4 flex items-center justify-between rounded-2xl shadow-lg border border-white/30">
-      <div className="flex-1">
-        <h2 className="text-base font-bold text-white">{title}</h2>
+    <div className="w-full h-16 bg-black px-4 py-4 flex items-center justify-between rounded-2xl shadow-lg border border-white/30 select-none">
+      <div className="flex-1 pr-4">
+        <h2 className="text-base font-bold text-white truncate">{title}</h2>
 
         {/* Progress Bar */}
         <div
@@ -87,11 +92,13 @@ const MusicPlayer = ({ title, song }) => {
             className="bg-red-400 h-1.5 rounded-full relative"
             style={{ width: `${(currentTime / duration) * 100}%` }}
           >
+            {/* Enlarged invisible touch area */}
             <div
-              className="w-6 h-6 rounded-full absolute -right-3 top-1/2 -translate-y-1/2 cursor-pointer flex items-center justify-center"
-              onMouseDown={handleMouseDown}
+              className="absolute -right-2 top-1/2 -translate-y-1/2 w-6 h-6 z-10"
+              onMouseDown={(e) => handleDragStart(e.clientX)}
+              onTouchStart={(e) => handleDragStart(e.touches[0].clientX)}
             >
-              <div className="w-3 h-3 bg-red-400 rounded-full" />
+              <div className="w-3 h-3 bg-red-400 rounded-full pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
             </div>
           </div>
         </div>
