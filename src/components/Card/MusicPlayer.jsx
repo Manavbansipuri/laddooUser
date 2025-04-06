@@ -1,34 +1,34 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { FaPlay, FaPause } from 'react-icons/fa';
-import { toast } from 'react-toastify';
 
 const MusicPlayer = ({ title, song }) => {
-  const audioRef = useRef(new Audio(song)); // Create an audio element
+  const audioRef = useRef(new Audio(song));
+  const progressBarRef = useRef(null);
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [isSeeking, setIsSeeking] = useState(false);
 
   useEffect(() => {
     const audio = audioRef.current;
 
-    // Update song duration when metadata loads
     const updateDuration = () => setDuration(audio.duration);
-    audio.addEventListener('loadedmetadata', updateDuration);
+    const updateTime = () => {
+      if (!isSeeking) setCurrentTime(audio.currentTime);
+    };
 
-    // Update current time when song plays
-    const updateTime = () => setCurrentTime(audio.currentTime);
+    audio.addEventListener('loadedmetadata', updateDuration);
     audio.addEventListener('timeupdate', updateTime);
 
     return () => {
       audio.removeEventListener('loadedmetadata', updateDuration);
       audio.removeEventListener('timeupdate', updateTime);
     };
-  }, []);
+  }, [isSeeking]);
 
-  // Play or Pause the song
   const togglePlayPause = () => {
     if (isPlaying) {
-
       audioRef.current.pause();
     } else {
       audioRef.current.play();
@@ -36,7 +36,6 @@ const MusicPlayer = ({ title, song }) => {
     setIsPlaying(!isPlaying);
   };
 
-  // Format time in mm:ss
   const formatTime = (time) => {
     if (isNaN(time)) return '0:00';
     const minutes = Math.floor(time / 60);
@@ -44,18 +43,55 @@ const MusicPlayer = ({ title, song }) => {
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
+  const seekTo = (clientX) => {
+    const progress = progressBarRef.current;
+    const rect = progress.getBoundingClientRect();
+    const newTime = ((clientX - rect.left) / rect.width) * duration;
+    audioRef.current.currentTime = newTime;
+    setCurrentTime(newTime);
+  };
+
+  const handleMouseDown = () => {
+    setIsSeeking(true);
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
+
+  const handleMouseMove = (e) => {
+    seekTo(e.clientX);
+  };
+
+  const handleMouseUp = (e) => {
+    seekTo(e.clientX);
+    setIsSeeking(false);
+    document.removeEventListener('mousemove', handleMouseMove);
+    document.removeEventListener('mouseup', handleMouseUp);
+  };
+
+  const handleSeekClick = (e) => {
+    seekTo(e.clientX);
+  };
+
   return (
     <div className="w-full h-16 bg-black px-4 py-4 flex items-center justify-between rounded-2xl shadow-lg border border-white/30">
-      {/* Song Title & Progress Bar */}
       <div className="flex-1">
         <h2 className="text-base font-bold text-white">{title}</h2>
 
         {/* Progress Bar */}
-        <div className="w-full bg-gray-700 h-1.5 rounded-full mt-1 relative">
+        <div
+          className="w-full bg-gray-700 h-1.5 rounded-full mt-1 relative cursor-pointer"
+          ref={progressBarRef}
+          onClick={handleSeekClick}
+        >
           <div
-            className="bg-red-400 h-1.5 rounded-full"
+            className="bg-red-400 h-1.5 rounded-full relative"
             style={{ width: `${(currentTime / duration) * 100}%` }}
-          ></div>
+          >
+            <div
+              className="w-3 h-3 bg-red-400 rounded-full absolute -right-1 top-1/2 -translate-y-1/2 cursor-pointer"
+              onMouseDown={handleMouseDown}
+            ></div>
+          </div>
         </div>
 
         {/* Timer Display */}
@@ -65,7 +101,6 @@ const MusicPlayer = ({ title, song }) => {
         </div>
       </div>
 
-      {/* Play/Pause Button */}
       <div className="flex items-center">
         <button
           className="p-3 bg-white text-black rounded-full flex items-center justify-center"
