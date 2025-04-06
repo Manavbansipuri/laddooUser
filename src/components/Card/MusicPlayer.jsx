@@ -88,9 +88,11 @@ const MusicPlayer = ({ title, song }) => {
             style={{ width: `${(currentTime / duration) * 100}%` }}
           >
             <div
-              className="w-3 h-3 bg-red-400 rounded-full absolute -right-1 top-1/2 -translate-y-1/2 cursor-pointer"
+              className="w-6 h-6 rounded-full absolute -right-3 top-1/2 -translate-y-1/2 cursor-pointer flex items-center justify-center"
               onMouseDown={handleMouseDown}
-            ></div>
+            >
+              <div className="w-3 h-3 bg-red-400 rounded-full" />
+            </div>
           </div>
         </div>
 
